@@ -1,6 +1,6 @@
 import queue
 import threading
-from link_1 import LinkFrame
+from link_2 import LinkFrame
 
 
 class MPLSlabel:
