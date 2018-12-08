@@ -5,25 +5,29 @@ from link_1 import LinkFrame
 
 class MPLSlabel:
 
-    labelLength = 20
+    labelLength = 5
 
     ## initialize the frame and label
     def __init__(self, frame, label):
         self.frame = frame
         self.label = label
 
+    ## called when printing the object
+    def __str__(self):
+        return self.to_byte_S()
+
     ## Sets the back of it with the label and fills the rest with zeros, then appends this to the packet
     def to_byte_S(self):
         byte_S = str(self.label).zfill(self.labelLength)
-        byte_S += self.frame.to_byte_S()
+        byte_S += str(self.frame)
         return byte_S
 
     ##decode our label from byte_S
     @classmethod
     def from_byte_S(self, byte_S):
-        frame = byte_S[self.labelLength]
-        length = byte_S[0:self.labelLength].strip('0')
-        return self(frame, length)
+        frame = byte_S[self.labelLength : ]
+        label = byte_S[ : self.labelLength].strip('0')
+        return self(frame, label)
 
 
 
@@ -198,7 +202,7 @@ class Router:
                 #send the MPLS frame for processing
                 self.process_MPLS_frame(m_fr, i)
             else:
-                raise('%s: unknown frame type: %s' % (self, fr.type))
+                raise('%s: unknown frame type: %s' % (self, fr.type_S))
 
     ## process a network packet incoming to this router
     #  @param p Packet to forward
@@ -232,8 +236,8 @@ class Router:
             else:
                 fr = LinkFrame("MPLS", m_fr.to_byte_S())
             # fr = LinkFrame('Network', m_fr.to_byte_S()) ##this is how it used to be set up. Always assume it was in there
-            self.intf_L[1].put(fr.to_byte_S(), 'out', True)
-            print('%s: forwarding frame "%s" from interface %d to %d' % (self, fr, i, 1))
+            self.intf_L[outInterface].put(fr.to_byte_S(), 'out', True)
+            print('%s: forwarding frame "%s" from interface %d to %d' % (self, fr, i, outInterface))
         except queue.Full:
             print('%s: frame "%s" lost on interface %d' % (self, m_fr, i))
             pass
