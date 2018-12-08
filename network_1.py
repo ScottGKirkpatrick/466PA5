@@ -13,7 +13,7 @@ class MPLSlabel:
         self.label = label
 
     ## Sets the back of it with the label and fills the rest with zeros, then appends this to the packet
-    def to_byte_s(self):
+    def to_byte_S(self):
         byte_S = str(self.label).zfill(self.labelLength)
         byte_S += self.frame.to_byte_S()
         return byte_S
@@ -22,7 +22,7 @@ class MPLSlabel:
     @classmethod
     def from_byte_S(self, byte_S):
         frame = byte_S[self.labelLength]
-        length = byte_S[0:self.label_length].strip('0')
+        length = byte_S[0:self.labelLength].strip('0')
         return self(frame, length)
 
 
@@ -193,9 +193,8 @@ class Router:
                 self.process_network_packet(p, i)
             elif fr.type_S == "MPLS":
                 # TODO: handle MPLS frames
-                # m_fr = MPLSFrame.from_byte_S(pkt_S) #parse a frame out
                 #for now, we just relabel the packet as an MPLS frame without encapsulation
-                m_fr = p
+                m_fr = MPLSlabel.from_byte_S(pkt_S)
                 #send the MPLS frame for processing
                 self.process_MPLS_frame(m_fr, i)
             else:
