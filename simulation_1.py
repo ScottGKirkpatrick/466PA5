@@ -5,9 +5,12 @@ from time import sleep
 import sys
 from copy import deepcopy
 
-  ## configuration parameters
+##configuration parameters
 router_queue_size = 0 #0 means unlimited
 simulation_time = 10 #give the network sufficient time to execute transfers
+
+
+
 
 if __name__ == '__main__':
     object_L = [] #keeps track of objects, so we can kill their threads at the end
@@ -19,22 +22,22 @@ if __name__ == '__main__':
     object_L.append(host_2)
     
     #create routers and routing tables for connected clients (subnets)
-    # {in-label : dest and {in_label : outlabel}
-    frwd_tbl_D = {'H2' : {'dest' : 'H2', 'outlabel': '3', 'intf' : '1'}, '2': {'dest' : 'H1', 'intf' : '0', 'outlabel':'H1'}}     # table used to forward MPLS frames
-	
-	# format of {current_router : {dest1, dest2} }
-    encap_tbl_D = {'H1' : {'RA'}, 'H2' : {'RB'} }     # table used to encapsulate network packets into MPLS frames
-    decap_tbl_D = {'RA' : {'H1'}, 'RB' : {'H2'} }    # table used to decapsulate network packets from MPLS frames
+    encap_tbl_D = {"H1": {"RA"}, "H2":{"RB"}}    # table used to encapsulate network packets into MPLS frames
+    frwd_tbl_D = {"2": {"dest" : "H1", "intf" : "0", "outlabel":"H1"}, "H2" : {"dest" : "H2", "outlabel": "3", "intf" : "1"}}     # table used to forward MPLS frames
+    decap_tbl_D = {"RA":{"H1"}, "RB":{"H2"}}    # table used to decapsulate network packets from MPLS frames
     router_a = Router(name='RA', 
-                              intf_capacity_L=[('H1',500),('RB', 500)],
+                              intf_capacity_L=[("H1",500),("RB",500)],
                               encap_tbl_D = encap_tbl_D,
                               frwd_tbl_D = frwd_tbl_D,
                               decap_tbl_D = decap_tbl_D, 
                               max_queue_size=router_queue_size)
     object_L.append(router_a)
-    frwd_tbl_D = {'3': {'dest' :'H2','outlabel' :'H2', "intf" : '1'} , 'H1' : {"intf" : '0', 'dest' : 'H1', 'outlabel':'2'}}   
+
+    encap_tbl_D = {"H1": {"RA"}, "H2":{"RB"}}
+    frwd_tbl_D = { "H1" : {"intf" : '0', "dest" : "H1", "outlabel":"2"} , "3": {"dest" :"H2","outlabel" :"H2", "intf" : "1"}}
+    decap_tbl_D = {"RA":{"H1"}, "RB":{"H2"}}
     router_b = Router(name='RB', 
-                              intf_capacity_L=[('RA', 500),('H2', 100)],
+                              intf_capacity_L=[("RA",500),("RB",100)],
                               encap_tbl_D = encap_tbl_D,
                               frwd_tbl_D = frwd_tbl_D,
                               decap_tbl_D = decap_tbl_D,
