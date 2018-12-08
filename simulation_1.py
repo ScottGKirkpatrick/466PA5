@@ -1,11 +1,11 @@
-from network import Router, Host
-from link import Link, LinkLayer
+from network_1 import Router, Host
+from link_1 import Link, LinkLayer
 import threading
 from time import sleep
 import sys
 from copy import deepcopy
 
-##configuration parameters
+  ## configuration parameters
 router_queue_size = 0 #0 means unlimited
 simulation_time = 10 #give the network sufficient time to execute transfers
 
