@@ -7,7 +7,7 @@ from copy import deepcopy
 
 ##configuration parameters
 router_queue_size = 0 #0 means unlimited
-simulation_time = 10 #give the network sufficient time to execute transfers
+simulation_time = 20 #give the network sufficient time to execute transfers
 
 
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     frwd_tbl_D = {"H1": {"dest" : "H3", "intf" : 2, "outLabel":"1"}, "H2" : {"dest" : "H3", "outLabel": "2", "intf" : 3}}     # table used to forward MPLS frames
     decap_tbl_D = {"RA":{"H1", "H2"}, "RD":{"H3"}}    # table used to decapsulate network packets from MPLS frames
     router_a = Router(name='RA', 
-                              intf_capacity_L=[("H1",500),("RB",500)],
+                              intf_capacity_L=[("H1",500),("H2",500),("RB",500),("RC",500)],
                               encap_tbl_D = encap_tbl_D,
                               frwd_tbl_D = frwd_tbl_D,
                               decap_tbl_D = decap_tbl_D, 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     frwd_tbl_D = { "1" : {"intf" : 1, "dest" : "H3", "outLabel":"1"} }
     decap_tbl_D = {"RA":{"H1", "H2"}, "RD":{"H3"}}
     router_b = Router(name='RB', 
-                              intf_capacity_L=[("RA",500),("RB",100)],
+                              intf_capacity_L=[("RA",500),("RD",100)],
                               encap_tbl_D = encap_tbl_D,
                               frwd_tbl_D = frwd_tbl_D,
                               decap_tbl_D = decap_tbl_D,
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     frwd_tbl_D = { "2" : {"intf" : 1, "dest" : "H3", "outLabel":"2"} }
     decap_tbl_D = {"RA":{"H1", "H2"}, "RD":{"H3"}}  
     router_c = Router(name='RC', 
-                              intf_capacity_L=[("RA",500),("RB",100)],
+                              intf_capacity_L=[("RA",500),("RD",100)],
                               encap_tbl_D = encap_tbl_D,
                               frwd_tbl_D = frwd_tbl_D,
                               decap_tbl_D = decap_tbl_D,
@@ -58,10 +58,10 @@ if __name__ == '__main__':
     object_L.append(router_c)
 
     encap_tbl_D = {"H1": {"RA"}, "H2":{"RB"}}
-    frwd_tbl_D = { "1" : {"intf" : 2, "dest" : "H3", "outLabel":"2"} , "2": {"dest" :"H3","outLabel" :"H3", "intf" : 2}}
+    frwd_tbl_D = { "1" : {"intf" : 2, "dest" : "H3", "outLabel":"H3"} , "2": {"dest" :"H3","outLabel" :"H3", "intf" : 2}}
     decap_tbl_D = {"RA":{"H1", "H2"}, "RD":{"H3"}}  
     router_d = Router(name='RD', 
-                              intf_capacity_L=[("RA",500),("RB",100)],
+                              intf_capacity_L=[("RC",100),("RB",100),("H3",100)],
                               encap_tbl_D = encap_tbl_D,
                               frwd_tbl_D = frwd_tbl_D,
                               decap_tbl_D = decap_tbl_D,
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     link_layer.add_link(Link(router_a, 2, router_b, 0))
     link_layer.add_link(Link(router_a, 3, router_c, 0))
     link_layer.add_link(Link(router_b, 1, router_d, 0))
-    link_layer.add_link(Link(router_c, 3, router_d, 1))
+    link_layer.add_link(Link(router_c, 1, router_d, 1))
     link_layer.add_link(Link(router_d, 2, host_3, 0))
 
     
