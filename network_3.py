@@ -231,7 +231,11 @@ class Router:
         intfName = self.intf_L[i].name
         ## do we need to encapsulate?
         if self.name in self.encap_tbl_D[intfName]: ## if from host, encapsulate
-            m_fr = MPLSlabel(pkt, intfName)
+            if int(pkt.priority) > 0:
+                label = '2'
+            else:
+                label = '1'
+            m_fr = MPLSlabel(pkt, label)
 
         print('%s: encapsulated packet "%s" as MPLS frame "%s"' % (self, pkt, m_fr))
         #send the encapsulated packet for processing as MPLS frame
